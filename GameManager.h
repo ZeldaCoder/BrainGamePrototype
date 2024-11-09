@@ -23,7 +23,7 @@ private:
   * Methods
   */
 
-  std::vector<Player> AddPlayers();
+  std::vector<Player*> AddPlayers();
   void NextTurn();
 
 public:

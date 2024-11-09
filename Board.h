@@ -1,21 +1,37 @@
+
+// Forward Declares
+class Player;
+
 class Board {
 public:
   Board();
 
 private:
   /*
-  * Instance Variables
-  */
+   * Instance Variables
+   */
   int boardWidth = 7;
   int boardHeight = 6;
-  int oldBoard[6][7] = {1};
+
+  const int MAX_HEIGHT = 40;
+  const int MAX_WIDTH = 40;
+
+  const int MIN_HEIGHT = 5;
+  const int MIN_WIDTH = 5;
+
+  int **boardArray;
 
 public:
   /*
-  * Methods
-  */
+   * Methods
+   */
 
-  int** InitBoard(int height, int width);
+  int **InitBoard(int height, int width);
   void DisplayBoard();
 
+  void SetRandomPlayerLocation(Player *p);
+
+  void SetPlayerLocation(Player *p);
+
+  bool IsTileAvailable(int position[2]);
 };
