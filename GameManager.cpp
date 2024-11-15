@@ -7,12 +7,29 @@ GameManager::GameManager() {
   // Create players
   players = AddPlayers();
 
+  // Set Player health
+  int inputHealth;
+  std::cout << "How much health do you want each player to have (MAX: " << players[0]->GetMaxHealth() << ")? ";
+  std::cin >> inputHealth;
+
+  if (inputHealth < 1) {
+    inputHealth = 1;
+  } else if (inputHealth > players[0]->GetMaxHealth()) {
+    inputHealth = players[0]->GetMaxHealth();
+  }
+  for (Player *p : players) {
+    p->SetHealth(inputHealth);
+  };
+
   // Create Board
   gameBoard = new Board();
 
+  // Optional removal of up to a quarter of the tiles
+  gameBoard->DeleteRandomTile();
+
   // Set init player positions
-  for (Player *p : players) {
-    gameBoard->SetRandomPlayerLocation(p);
+  for (int i = 0; i < players.size(); i++) {
+    gameBoard->SetRandomPlayerLocation(players[i]);
   }
 }
 
@@ -32,9 +49,20 @@ void GameManager::Play() {
   Main gameplay loop
 */
 void GameManager::NextTurn() {
+  // Get the levers of the board
+  std::vector<Lever*> ls = gameBoard->GetLevers();
+  std::cout << ls.size() << std::endl;
+  if (ls.size() < 1) {
+    std::cout << "Spawning lever" << std::endl;
+    gameBoard->SpawnRandomLevers();
+  }
+  
+  // Loop through all players and make them do their actions
   int playerTurn = numOfTurns % players.size();
   Player *currentPlayer = players[playerTurn];
   currentPlayer->Action(gameBoard);
+
+  // Move to next round
   numOfTurns++;
 }
 

@@ -1,5 +1,6 @@
 #include "player.h"
 #include "Board.h"
+#include "Lever.h"
 #include <iostream>
 
 Player::Player() {
@@ -11,32 +12,32 @@ Player::Player() {
 }
 
 void Player::Move(Board *b, std::string dir) {
-  int newDir[2] = {0, 0};
+  Tile newDir = {0, 0, 1};
 
   // Find direction we want to move in based on input
   if (dir == DIR_UP) {
-    newDir[1] = -1;
+    newDir.y = -1;
   } else if (dir == DIR_DOWN) {
-    newDir[1] = 1;
+    newDir.y = 1;
   } else if (dir == DIR_LEFT) {
-    newDir[0] = -1;
+    newDir.x = -1;
   } else if (dir == DIR_RIGHT) {
-    newDir[0] = 1;
+    newDir.x = 1;
   }
 
   // Set the new destination then check it
-  int newPosition[2] = {currentTilePosition[0] + newDir[0],
-                        currentTilePosition[1] + newDir[1]};
+  Tile newPosition = currentTilePosition + newDir;
 
   // check if there is no player or hole there
   if (b->IsTileAvailable(newPosition)) {
     // Set previous position to clear the old one on the board
-    previousTilePosition[1] = currentTilePosition[1];
-    previousTilePosition[0] = currentTilePosition[0];
-    
+    previousTilePosition = currentTilePosition;
+
     // Update currentTilePosition
-    currentTilePosition[0] = newPosition[0];
-    currentTilePosition[1] = newPosition[1];
+    currentTilePosition = newPosition;
+
+    // Applies harmful effect if is a trap or hole
+    b->TileHarmful(this);
 
     // Move the Player and Update the board
     b->SetPlayerLocation(this);
@@ -48,22 +49,30 @@ void Player::Move(Board *b, std::string dir) {
 }
 
 void Player::Action(Board *b) {
-  std::string actionInput;
+  if (GetIsAlive()) {
+    std::string actionInput;
 
-  // State whos turn it is
-  std::cout << "It is " << name << " turn!" << std::endl;
+    // State whos turn it is
+    std::cout << "It is " << name << " turn!" << std::endl;
 
-  // List PowerUps
-  std::cout << "You have: " << std::endl;
+    // List PowerUps
+    std::cout << "You have: " << std::endl;
 
-  // Ask for action
-  std::cout << "What do you want to do? ";
-  std::cin >> actionInput;
+    // Ask for action
+    std::cout << "What do you want to do? ";
+    std::cin >> actionInput;
 
-  // Based on input do these things
-  if (actionInput == DIR_DOWN || actionInput == DIR_UP ||
-      actionInput == DIR_RIGHT || actionInput == DIR_LEFT) {
-    Move(b, actionInput);
+    // Based on input do these things
+    if (actionInput == DIR_DOWN || actionInput == DIR_UP ||
+        actionInput == DIR_RIGHT || actionInput == DIR_LEFT) {
+      Move(b, actionInput);
+    }
+
+    if (actionInput == INTERACT && b->GetBoardTile(GetCurrentTilePosition())->boardValue == (boardValue + Lever::GetLeverValue())) {
+      Interact(b);
+    }
+  } else {
+    std::cout << name << " is dead! Moving on to the next player" << std::endl;
   }
 }
 
@@ -75,16 +84,57 @@ void Player::SetBoardValue(int value) { boardValue = value; }
 
 int Player::GetBoardValue() { return boardValue; }
 
-int *Player::GetCurrentTilePosition() { return currentTilePosition; }
+Tile Player::GetCurrentTilePosition() { return currentTilePosition; }
 
 void Player::SetCurrentTilePosition(int newX, int newY) {
-  currentTilePosition[0] = newX;
-  currentTilePosition[1] = newY;
+  currentTilePosition.x = newX;
+  currentTilePosition.y = newY;
 }
 
-int *Player::GetPreviousTilePosition() { return previousTilePosition; }
+Tile Player::GetPreviousTilePosition() { return previousTilePosition; }
 
 void Player::SetPreviousTilePosition(int newX, int newY) {
-  previousTilePosition[0] = newX;
-  previousTilePosition[1] = newY;
+  previousTilePosition.x = newX;
+  previousTilePosition.y = newY;
+}
+
+bool Player::GetIsAlive() {
+  if (health < 1) {
+    isAlive = false;
+  } else {
+    isAlive = true;
+  }
+
+  return isAlive;
+}
+
+int Player::GetHealth() { return health; }
+
+void Player::SetHealth(int newHealth) {
+  if (newHealth < maxHealth) {
+    health = newHealth;
+  }
+}
+
+int Player::GetMaxHealth() { return maxHealth; }
+
+void Player::Interact(Board* b) {
+  // Get the tile that shares the power up
+  Tile *bPos = b->GetBoardTile(GetCurrentTilePosition());
+
+  // Remove the trap from the tile (Display wise)
+  bPos->boardValue -= Lever::GetLeverValue();
+  std::vector<Lever*> ls = b->GetLevers();
+
+  std::vector<Lever*>::iterator leverIter;
+
+  // loop through the levers and check if the current tile is a lever ERROR HERE ITERATOR DOESN'T RETURN THE RIGHT VALUES
+  for (leverIter = ls.begin(); leverIter != ls.end(); leverIter++) {
+    std::cout << (*leverIter)->GetCurrentTile().x << ", " << (*leverIter)->GetCurrentTile().y << std::endl;
+    if ((*leverIter)->GetCurrentTile() == GetCurrentTilePosition()) {
+      // Get access to the lever we activated then remove it (Code wise)
+      b->ApplyTraps(*leverIter, leverIter);
+      break;
+    }
+  } 
 }

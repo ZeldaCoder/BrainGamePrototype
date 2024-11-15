@@ -1,4 +1,5 @@
 #include <string>
+#include "Tile.h"
 
 class Board;
 
@@ -13,12 +14,14 @@ private:
    */
   int boardValue; // Number on the board
   int health;
+  int maxHealth = 3;
+  bool isAlive = true;
   std::string name; // Gets outputted for winner or who died or who used power-up
   int movementSpeed = 1;
   bool canMoveDiagonally = false;
 
-  int currentTilePosition[2] = {0, 0};
-  int previousTilePosition[2] = {0, 0};
+  Tile currentTilePosition;
+  Tile previousTilePosition;
 
   // Base Directions
   const std::string DIR_UP = "w";
@@ -42,14 +45,13 @@ private:
    */
 
   void Move(Board* b, std::string dir);
+  void Interact(Board* b);
 
 public:
   /*
    * Accessors and Mutators
    */
 
-  int GetHealth();
-  void SetHealth(int newHealth);
 
   std::string GetName();
   void SetName(std::string newName);
@@ -57,10 +59,10 @@ public:
   int GetBoardValue();
   void SetBoardValue(int newBoardValue);
 
-  int* GetCurrentTilePosition();
+  Tile GetCurrentTilePosition();
   void SetCurrentTilePosition(int newX, int newY);
 
-  int* GetPreviousTilePosition();
+  Tile GetPreviousTilePosition();
   void SetPreviousTilePosition(int newX, int newY);
 
   /*
@@ -68,4 +70,13 @@ public:
   */
 
   void Action(Board* b);
+
+  bool GetIsAlive();
+  void SetIsAlive(bool newIsAlive);
+
+  void SetHealth(int newHealth);
+  int GetHealth();
+
+  int GetMaxHealth();
+
 };

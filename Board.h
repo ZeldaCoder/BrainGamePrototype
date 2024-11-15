@@ -1,6 +1,9 @@
+#include <vector>
+#include "Tile.h"
 
 // Forward Declares
 class Player;
+class Lever;
 
 class Board {
 public:
@@ -19,19 +22,45 @@ private:
   const int MIN_HEIGHT = 5;
   const int MIN_WIDTH = 5;
 
-  int **boardArray;
+  std::vector<Tile> boardArray;
+
+  std::vector<Lever*> levers;
+
+  const int MAX_LEVERS = 5;
+  // const int MAX_POWER_UPS = 3;
+
+  /* 
+  * Methods
+  */
+
+  Tile* GetRandomBoardTile();
+
+  
 
 public:
   /*
    * Methods
    */
 
-  int **InitBoard(int height, int width);
+  std::vector<Tile> InitBoard(int height, int width);
   void DisplayBoard();
 
   void SetRandomPlayerLocation(Player *p);
 
   void SetPlayerLocation(Player *p);
 
-  bool IsTileAvailable(int position[2]);
+  bool IsTileAvailable(Tile position);
+  void TileHarmful(Player *p);
+
+  void DeleteRandomTile();
+
+  void SpawnRandomLevers();
+
+  std::vector<Lever*> GetLevers();
+
+  Tile* GetBoardTile(Tile givenTile);
+
+  std::vector<Tile> GetAllTiles();
+
+  void ApplyTraps(Lever* aL, std::vector<Lever*>::iterator leverIter);
 };
