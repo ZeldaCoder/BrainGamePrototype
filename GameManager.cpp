@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include "BaseTrap.h"
 #include "Board.h"
 #include "player.h"
 #include <iostream>
@@ -9,7 +10,8 @@ GameManager::GameManager() {
 
   // Set Player health
   int inputHealth;
-  std::cout << "How much health do you want each player to have (MAX: " << players[0]->GetMaxHealth() << ")? ";
+  std::cout << "How much health do you want each player to have (MAX: "
+            << players[0]->GetMaxHealth() << ")? ";
   std::cin >> inputHealth;
 
   if (inputHealth < 1) {
@@ -39,7 +41,7 @@ void GameManager::Play() {
     std::cout << "Game started!" << std::endl;
   }
 
-  while (numOfTurns < 12) {
+  while (numOfTurns < 50) {
     gameBoard->DisplayBoard();
     NextTurn();
   }
@@ -56,7 +58,7 @@ void GameManager::NextTurn() {
     std::cout << "Spawning lever" << std::endl;
     gameBoard->SpawnRandomLevers();
   }
-  
+
   // Loop through all players and make them do their actions
   int playerTurn = numOfTurns % players.size();
   Player *currentPlayer = players[playerTurn];
@@ -64,6 +66,9 @@ void GameManager::NextTurn() {
 
   // Move to next round
   numOfTurns++;
+
+  // update the timer for any active traps
+  UpdateTrapTimers();
 }
 
 std::vector<Player *> GameManager::AddPlayers() {
@@ -72,6 +77,7 @@ std::vector<Player *> GameManager::AddPlayers() {
   int numPlayers;
   std::cin >> numPlayers;
 
+  // Cap minimum and maximum amount of players
   if (numPlayers < 1) {
     numPlayers = 1;
   } else if (numPlayers > 4) {
@@ -80,6 +86,7 @@ std::vector<Player *> GameManager::AddPlayers() {
 
   std::vector<Player *> playerList;
 
+  // Set player board value and and them to the list
   for (int i = 0; i < numPlayers; i++) {
     Player *newPlayer = new Player();
     newPlayer->SetBoardValue(8 + i);
@@ -88,6 +95,7 @@ std::vector<Player *> GameManager::AddPlayers() {
 
   std::cout << std::endl;
 
+  // display board value for each player
   for (Player *p : playerList) {
     std::cout << p->GetName() << ": " << p->GetBoardValue() << std::endl;
   }
@@ -95,4 +103,17 @@ std::vector<Player *> GameManager::AddPlayers() {
   std::cout << std::endl;
 
   return playerList;
+}
+
+void GameManager::UpdateTrapTimers() {
+  for (auto it = activeTraps.begin(); it != activeTraps.end(); ) {
+    // Update the timer for the trap
+    (*it)->TrapCountdown(GameManager::numOfTurns);
+
+    if ((*it)->GetIsActivated() == false) {
+      it = activeTraps.erase(it);  // Remove the trap and get the new iterator
+    } else {
+      ++it;  // Only increment the iterator if we didn't erase an element
+    }
+  }
 }

@@ -1,4 +1,4 @@
-#include <iostream>
+#include <ostream>
 #pragma once
 // coordinate system Point
 struct Tile {
@@ -18,10 +18,6 @@ struct Tile {
     result.y = this->y + other.y; // Add the y components
     return result;
   }
-
-  std::iostream &operator<<(std::iostream &os) {
-    std::cout << "(" << this->x << ", " << this->y << ")";
-    return os;
-  }
-
 };
+
+std::ostream &operator<<(std::ostream &os, const Tile& tile);

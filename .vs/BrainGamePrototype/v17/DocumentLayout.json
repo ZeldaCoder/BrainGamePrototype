@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\GameRunner.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:GameRunner.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\GameManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:GameManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\Lever.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Lever.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\Lever.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Lever.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\GameRunner.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:GameRunner.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,30 +26,56 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
+              "Title": "Lever.cpp",
+              "DocumentMoniker": "C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\Lever.cpp",
+              "RelativeDocumentMoniker": "Lever.cpp",
+              "ToolTip": "C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\Lever.cpp",
+              "RelativeToolTip": "Lever.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-15T03:33:50.432Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Lever.h",
+              "DocumentMoniker": "C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\Lever.h",
+              "RelativeDocumentMoniker": "Lever.h",
+              "ToolTip": "C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\Lever.h",
+              "RelativeToolTip": "Lever.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACYAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-15T03:32:17.819Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "GameRunner.cpp",
               "DocumentMoniker": "C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\GameRunner.cpp",
               "RelativeDocumentMoniker": "GameRunner.cpp",
               "ToolTip": "C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\GameRunner.cpp",
               "RelativeToolTip": "GameRunner.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-11-15T02:59:11.397Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "GameManager.h",
               "DocumentMoniker": "C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\GameManager.h",
               "RelativeDocumentMoniker": "GameManager.h",
               "ToolTip": "C:\\Users\\jeded\\OneDrive\\Desktop\\MyGames\\BrainGamePrototype\\GameManager.h",
               "RelativeToolTip": "GameManager.h",
-              "ViewState": "AQIAABgAAAAAAAAAAAAAAB4AAAAAAAAA",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-11-15T02:58:38.112Z",
               "EditorCaption": ""

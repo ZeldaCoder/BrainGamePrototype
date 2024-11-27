@@ -1,7 +1,10 @@
 #include "Board.h"
 #include "Lever.h"
 #include "player.h"
+#include "BaseTrap.h"
+#include "GameManager.h"
 #include <iostream>
+#include <algorithm>
 
 Board::Board() {
   // Initialize the board with empty spaces
@@ -82,10 +85,7 @@ void Board::SetRandomPlayerLocation(Player *p) {
 
 void Board::SetPlayerLocation(Player *p) {
   // Say where the player moved
-  std::cout << p->GetName() + " Has Moved to " +
-                   std::to_string(p->GetCurrentTilePosition().x) + " and " +
-                   std::to_string(p->GetCurrentTilePosition().y)
-            << std::endl;
+  std::cout << p->GetName() << " Has Moved to " << p->GetCurrentTilePosition() << std::endl;
 
   /*
   std::cout << p->GetName() << " has moved to " << p->GetCurrentTilePosition()
@@ -212,57 +212,64 @@ void Board::DeleteRandomTile() {
 
 void Board::SpawnRandomLevers() {
   // randomly choose how many levers to spawn
-  int chanceOfLevers = rand() % MAX_LEVERS;
+  int chanceOfLevers = (rand() % MAX_LEVERS) + 1;
 
   for (int i = 0; i < chanceOfLevers; i++) {
     // Get a random tile that doesn't have anything
     Tile *randomTile = GetRandomBoardTile();
+    std::cout << *randomTile << std::endl;
 
     // Create a lever for that tile
-    Lever lever = Lever(randomTile);
-    Lever *lvrPtr = &lever;
-
-    levers.push_back(lvrPtr);
+    Lever* lever = new Lever(*randomTile);
+    
+    levers.push_back(lever);
 
     // Set location on the board
     randomTile->boardValue = Lever::GetLeverValue();
   }
 }
 
-std::vector<Lever *> Board::GetLevers() { return levers; }
+std::vector<Lever*>& Board::GetLevers() { return levers; }
 
-void Board::ApplyTraps(Lever* aL, std::vector<Lever*>::iterator leverIter) {
-  // Remove Lever from list
-  levers.erase(leverIter);
+void Board::ApplyTraps(std::vector<Lever*>::iterator& leverIter) {
+    Lever* l = (*leverIter);
+    std::cout << l->GetCurrentTile() << std::endl;
+    BaseTrap* t = l->SetRandomTrap();
+    // List of traps made by the lever
+    std::vector<Tile*> trappedTiles;
 
-  // List of traps made by the lever
-  std::vector<Tile*> trappedTiles;
-  
-  // 50% chance of choosing the tiles
-  int chance = rand() % 2;
-
-  chance = 0;
-
-  if (chance == 0) {
-    // Randomize the tiles
-    int numOfTrappedTiles = rand() % boardArray.size() / 4; // Only cover up to 25% of the tiles
-
-    for (int i = 0; i < numOfTrappedTiles; i++) {
-      trappedTiles.push_back(GetRandomBoardTile());
+    // 50% chance of choosing the tiles
+    int chance = rand() % 2;
+    // Delete when make child trap specific selection
+    chance = 0;
+    if (chance == 0) {
+        // Make this code trap specific 
+        // Randomize the tiles
+        int numOfTrappedTiles = rand() % boardArray.size() / 4; // Only cover up to 25% of the tiles
+        for (int i = 0; i < numOfTrappedTiles; i++) {
+            trappedTiles.push_back(GetRandomBoardTile());
+        }
+    } else {
+        // Pick tiles you want to activate
     }
-  } else {
-    // Pick tiles you want to activate
-  }
+    // Apply the Trap that the lever has
+    t->SetWhenActivated(GameManager::GetNumOfTurns());
+    t->SetAffectedTiles(trappedTiles);
+    GameManager::AddActivatedTrap(t);
+    if (trappedTiles.size() <= 0) {
+        std::cout << "No traps were activated" << std::endl;
+    } 
 
-  // Apply the Trap that the lever has
-  std::vector<Tile*>::iterator tTIter;
+    std::cout << (*leverIter)->GetCurrentTile() << std::endl; // Print before erase
 
-  for (tTIter = trappedTiles.begin(); tTIter != trappedTiles.end(); tTIter++) {
-    (*tTIter)->boardValue = Lever::GetLeverValue();
-  }
+    auto leverEnd = std::remove(levers.begin(), levers.end(), l);
+  
+    leverIter = levers.erase(leverEnd, levers.end());  // Erase and move iterator to the next element
 
-  // Test code
-  for (Lever* l : levers) {
-    std::cout << l->GetCurrentTile().x << ", " << l->GetCurrentTile().y << std::endl;
-  }
+    
+    
+    for (int i = 0; i < levers.size(); i++) {
+        std::cout << levers[i]->GetCurrentTile() << std::endl; // Print the rest of the elements
+    }
+
 }

@@ -1,13 +1,13 @@
 #include "Tile.h"
+#include <vector>
+#pragma once
 
-// Forward Declares
 class BaseTrap;
-
 
 class Lever {
 public:
   // Constructor
-  Lever(Tile* t);
+  Lever(Tile t);
 
 private:
   /*
@@ -16,14 +16,13 @@ private:
 
   inline static int boardValue = 5; // Number on the board
   Tile currentTile; // position on the board
-  BaseTrap* activeTrap; // trap that the lever is connected to
-  bool isActivated = false; // whether the lever is activated or not
+  // bool isActivated = false; // whether the lever is activated or not
 
   /*
   * Methods
   */
   
-  void SetRandomTrap();
+ 
 
 public:
 
@@ -31,10 +30,13 @@ public:
    * Methods
    */
 
+  BaseTrap* SetRandomTrap();
+
   void SetCurrentTile(Tile newPos);
   Tile GetCurrentTile();
 
   inline static int GetLeverValue() {
-    return boardValue;
-  };
+    return Lever::boardValue;
+  }
 };
+

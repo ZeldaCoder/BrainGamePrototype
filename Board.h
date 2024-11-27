@@ -1,9 +1,9 @@
 #include <vector>
 #include "Tile.h"
+#include "Lever.h"
 
 // Forward Declares
 class Player;
-class Lever;
 
 class Board {
 public:
@@ -56,11 +56,11 @@ public:
 
   void SpawnRandomLevers();
 
-  std::vector<Lever*> GetLevers();
+  std::vector<Lever*>& GetLevers();
 
   Tile* GetBoardTile(Tile givenTile);
 
   std::vector<Tile> GetAllTiles();
 
-  void ApplyTraps(Lever* aL, std::vector<Lever*>::iterator leverIter);
+  void ApplyTraps(std::vector<Lever*>::iterator& leverIter);
 };

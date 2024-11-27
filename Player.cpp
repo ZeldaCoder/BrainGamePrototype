@@ -73,6 +73,14 @@ void Player::Action(Board *b) {
     }
   } else {
     std::cout << name << " is dead! Moving on to the next player" << std::endl;
+
+    // remove player from the board (When player dies in a hole, make a tile there)
+    Tile* boardTile = b->GetBoardTile(GetCurrentTilePosition());
+    if (boardTile->boardValue - this->GetBoardValue() <= 0) {
+      boardTile->boardValue = 1;
+    } else {
+      boardTile->boardValue -= this->GetBoardValue();
+    }
   }
 }
 
@@ -126,15 +134,18 @@ void Player::Interact(Board* b) {
   bPos->boardValue -= Lever::GetLeverValue();
   std::vector<Lever*> ls = b->GetLevers();
 
-  std::vector<Lever*>::iterator leverIter;
+  for (int i = 0; i < ls.size(); i++) {
+    std::cout << ls[i]->GetCurrentTile() << std::endl;
+  }
 
-  // loop through the levers and check if the current tile is a lever ERROR HERE ITERATOR DOESN'T RETURN THE RIGHT VALUES
-  for (leverIter = ls.begin(); leverIter != ls.end(); leverIter++) {
-    std::cout << (*leverIter)->GetCurrentTile().x << ", " << (*leverIter)->GetCurrentTile().y << std::endl;
+  // loop through the levers and check if the current tile is a lever
+  for (auto leverIter = ls.begin(); leverIter != ls.end();) {
     if ((*leverIter)->GetCurrentTile() == GetCurrentTilePosition()) {
       // Get access to the lever we activated then remove it (Code wise)
-      b->ApplyTraps(*leverIter, leverIter);
+      b->ApplyTraps(leverIter);
       break;
+    } else {
+      ++leverIter;
     }
   } 
 }
