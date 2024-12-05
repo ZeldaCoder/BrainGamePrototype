@@ -29,18 +29,19 @@ private:
   const int MAX_LEVERS = 5;
   // const int MAX_POWER_UPS = 3;
 
-  /* 
-  * Methods
-  */
-
-  Tile* GetRandomBoardTile();
-
   
 
 public:
   /*
    * Methods
    */
+
+  Tile* GetRandomBoardTile();
+
+  int GetNumOfTiles();
+
+  int GetBoardWidth();
+  int GetBoardHeight();
 
   std::vector<Tile> InitBoard(int height, int width);
   void DisplayBoard();

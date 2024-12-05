@@ -1,8 +1,8 @@
 #include "Board.h"
 #include "Lever.h"
-#include "player.h"
-#include "BaseTrap.h"
-#include "GameManager.h"
+#include "../Characters/player.h"
+#include "../Traps/BaseTrap.h"
+#include "../Runners/GameManager.h"
 #include <iostream>
 #include <algorithm>
 
@@ -44,8 +44,7 @@ std::vector<Tile> Board::InitBoard(int h, int w) {
       Tile newTile;
       newTile.x = ii;
       newTile.y = i;
-      newTile.boardValue = 1;
-
+      newTile.AddState(TileState::RegTile);
       tiles.push_back(newTile);
     }
   }
@@ -57,16 +56,24 @@ void Board::DisplayBoard() {
   for (int i = 0; i < boardHeight; i++) {
     std::cout << "|";
     for (int ii = 0; ii < boardWidth; ii++) {
-      if (boardArray[i * boardWidth + ii].boardValue == 1) {
-        std::cout << " -- ";
-      } else if (boardArray[i * boardWidth + ii].boardValue == 0) {
-        std::cout << "    ";
-      } else if (boardArray[i * boardWidth + ii].boardValue < 10 &&
-                 boardArray[i * boardWidth + ii].boardValue > 1) {
-        std::cout << " " << boardArray[i * boardWidth + ii].boardValue << "  ";
-      } else if (boardArray[i * boardWidth + ii].boardValue >= 10) {
-        std::cout << " " << boardArray[i * boardWidth + ii].boardValue << " ";
-      }
+      if (boardArray[i * boardWidth + ii].displayedState == TileState::RegTile) {
+        std::cout << " - ";
+      } else if (boardArray[i * boardWidth + ii].displayedState == TileState::HoleTile) {
+        std::cout << "   ";
+      } else if (boardArray[i * boardWidth + ii].displayedState == TileState::WarningTile) {
+        std::cout << " ~ ";
+      } else if (boardArray[i * boardWidth + ii].displayedState == TileState::TrapTile) {
+        std::cout << " X ";
+      } else if (boardArray[i * boardWidth + ii].displayedState == TileState::ThoughtTile) {
+        std::cout << " T ";
+      } else if (boardArray[i * boardWidth + ii].displayedState == TileState::LeverTile) {
+        std::cout << " L ";
+      } else if (boardArray[i * boardWidth + ii].displayedState == TileState::MBTile) {
+        std::cout << " ? ";
+      } else if (boardArray[i * boardWidth + ii].displayedState == TileState::PlayerTile) {
+        // make some distinction between players
+        std::cout << " P ";
+      } 
     }
     std::cout << "|" << std::endl;
   }
@@ -77,30 +84,21 @@ void Board::SetRandomPlayerLocation(Player *p) {
   Tile *newPos = GetRandomBoardTile();
 
   // If there is nothing in that location, Move the player there
-  if (newPos->boardValue == 1) {
-    newPos->boardValue = p->GetBoardValue();
+  if (newPos->displayedState == TileState::RegTile) {
+    newPos->AddState(TileState::PlayerTile);
     p->SetCurrentTilePosition(newPos->x, newPos->y);
   }
 }
 
 void Board::SetPlayerLocation(Player *p) {
   // Say where the player moved
-  std::cout << p->GetName() << " Has Moved to " << p->GetCurrentTilePosition() << std::endl;
-
-  /*
-  std::cout << p->GetName() << " has moved to " << p->GetCurrentTilePosition()
-  << std::endl;
-  */
+  std::cout << p->GetName() << " Has Moved to " << p->GetCurrentTilePosition()
+            << std::endl;
 
   // Set the player location on the board
   for (int i = 0; i < boardArray.size(); i++) {
     if (boardArray[i] == p->GetCurrentTilePosition()) {
-      if (boardArray[i].boardValue == 1) {
-        boardArray[i].boardValue = p->GetBoardValue();
-      } else {
-        // If there is a trap or something else there add the values together so that the computer knows
-        boardArray[i].boardValue += p->GetBoardValue();
-      }
+      boardArray[i].AddState(TileState::PlayerTile);
       
     }
   }
@@ -110,13 +108,9 @@ void Board::SetPlayerLocation(Player *p) {
   // other object there
   Tile *previousLoc = GetBoardTile(p->GetPreviousTilePosition());
 
-  if (previousLoc->boardValue - p->GetBoardValue() == 0) {
-    // Nothing was there you can just set it back to a regular tile
-    previousLoc->boardValue = 1;
-  } else {
-    // some other collectable was there don't get rid of it
-    previousLoc->boardValue -= p->GetBoardValue();
-  }
+  previousLoc->RemoveState(TileState::PlayerTile);
+
+  
 }
 
 bool Board::IsTileAvailable(Tile position) {
@@ -128,12 +122,10 @@ bool Board::IsTileAvailable(Tile position) {
     Tile *bPos = GetBoardTile(position);
 
     // Check if the tile is already ocupied
-    if (bPos->boardValue != 8 &&
-        bPos->boardValue != 9 && bPos->boardValue != 10 &&
-        bPos->boardValue != 11) {
-      return true;
-    } else {
+    if (bPos->ContainsState(TileState::HoleTile) || bPos->ContainsState(TileState::PlayerTile)) {
       return false;
+    } else {
+      return true;
     }
   }
 }
@@ -145,15 +137,16 @@ void Board::TileHarmful(Player *p) {
   int newHealth = p->GetHealth();
 
   // Check if the tile contains trap or hole
-  if (bPos->boardValue == 4) {
+  if (bPos->displayedState == 
+    TileState::TrapTile) {
     std::cout << "You hit a trap, you will lose a life!" << std::endl;
     newHealth--;
     p->SetHealth(newHealth);
-  } else if (bPos->boardValue == 0) {
+  } else if (bPos->displayedState == TileState::HoleTile) {
     std::cout << "You fell into a hole, you will lose a life!" << std::endl;
     newHealth--;
     p->SetHealth(newHealth);
-  } else if (bPos->boardValue == 2) {
+  } else if (bPos->displayedState == TileState::ThoughtTile) {
     int chanceForGood = rand() % 2;
     if (chanceForGood == 1) {
       std::cout << "You hit a rouge thought! Unlucky" << std::endl;
@@ -172,7 +165,7 @@ Tile *Board::GetBoardTile(Tile givenTile) {
   }
 
   // If couldn't find it return nullptr
-  Tile *emptyTile = new Tile{0, 0, 0};
+  Tile *emptyTile = new Tile{0, 0, TileState::RegTile};
   return emptyTile;
 }
 
@@ -181,13 +174,21 @@ Tile *Board::GetRandomBoardTile() {
   int randTile = rand() % boardArray.size();
 
   // Check if the tile has anything on it
-  while (boardArray[randTile].boardValue != 1) {
+  while (boardArray[randTile].displayedState != TileState::RegTile) {
     randTile = rand() % boardArray.size();
   }
 
   // The momenent there is a normal tile return it
   return &boardArray[randTile];
 }
+
+int Board::GetNumOfTiles() { return boardArray.size(); }
+
+int Board::GetBoardWidth() { return boardWidth; }
+
+int Board::GetBoardHeight() { return boardHeight; }
+
+std::vector<Tile> Board::GetAllTiles() { return boardArray; }
 
 void Board::DeleteRandomTile() {
   std::cout << "Do you want to delete random tiles from the board (y/n)? ";
@@ -205,7 +206,7 @@ void Board::DeleteRandomTile() {
       Tile *removedTile = GetRandomBoardTile();
 
       // Set it to unlandable
-      removedTile->boardValue = 0;
+      removedTile->AddState(TileState::HoleTile);
     }
   }
 }
@@ -225,51 +226,33 @@ void Board::SpawnRandomLevers() {
     levers.push_back(lever);
 
     // Set location on the board
-    randomTile->boardValue = Lever::GetLeverValue();
+    randomTile->AddState(TileState::LeverTile);
   }
 }
 
 std::vector<Lever*>& Board::GetLevers() { return levers; }
 
 void Board::ApplyTraps(std::vector<Lever*>::iterator& leverIter) {
+    // get trap
     Lever* l = (*leverIter);
-    std::cout << l->GetCurrentTile() << std::endl;
     BaseTrap* t = l->SetRandomTrap();
-    // List of traps made by the lever
-    std::vector<Tile*> trappedTiles;
 
     // 50% chance of choosing the tiles
     int chance = rand() % 2;
-    // Delete when make child trap specific selection
-    chance = 0;
+
+    // Issue here <-----------------------------------------------------------
     if (chance == 0) {
-        // Make this code trap specific 
-        // Randomize the tiles
-        int numOfTrappedTiles = rand() % boardArray.size() / 4; // Only cover up to 25% of the tiles
-        for (int i = 0; i < numOfTrappedTiles; i++) {
-            trappedTiles.push_back(GetRandomBoardTile());
-        }
+        // randomly pick trapped tiles
+        t->SetRandomAffectedTiles(this);
     } else {
         // Pick tiles you want to activate
+        t->SetChosenAffectedTiles(this);
     }
     // Apply the Trap that the lever has
     t->SetWhenActivated(GameManager::GetNumOfTurns());
-    t->SetAffectedTiles(trappedTiles);
     GameManager::AddActivatedTrap(t);
-    if (trappedTiles.size() <= 0) {
-        std::cout << "No traps were activated" << std::endl;
-    } 
 
-    std::cout << (*leverIter)->GetCurrentTile() << std::endl; // Print before erase
-
+    // Erase and move iterator to the next element
     auto leverEnd = std::remove(levers.begin(), levers.end(), l);
-  
-    leverIter = levers.erase(leverEnd, levers.end());  // Erase and move iterator to the next element
-
-    
-    
-    for (int i = 0; i < levers.size(); i++) {
-        std::cout << levers[i]->GetCurrentTile() << std::endl; // Print the rest of the elements
-    }
-
+    leverIter = levers.erase(leverEnd, levers.end());  
 }
