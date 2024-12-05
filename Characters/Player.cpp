@@ -1,6 +1,6 @@
 #include "player.h"
-#include "Board.h"
-#include "Lever.h"
+#include "../Gameboard/Board.h"
+#include "../Gameboard/Lever.h"
 #include <iostream>
 
 Player::Player() {
@@ -12,7 +12,7 @@ Player::Player() {
 }
 
 void Player::Move(Board *b, std::string dir) {
-  Tile newDir = {0, 0, 1};
+  Tile newDir = {0, 0, TileState::LeverTile};
 
   // Find direction we want to move in based on input
   if (dir == DIR_UP) {
@@ -68,7 +68,7 @@ void Player::Action(Board *b) {
       Move(b, actionInput);
     }
 
-    if (actionInput == INTERACT && b->GetBoardTile(GetCurrentTilePosition())->boardValue == (boardValue + Lever::GetLeverValue())) {
+    if (actionInput == INTERACT && b->GetBoardTile(GetCurrentTilePosition())->ContainsState(TileState::LeverTile)) {
       Interact(b);
     }
   } else {
@@ -76,10 +76,8 @@ void Player::Action(Board *b) {
 
     // remove player from the board (When player dies in a hole, make a tile there)
     Tile* boardTile = b->GetBoardTile(GetCurrentTilePosition());
-    if (boardTile->boardValue - this->GetBoardValue() <= 0) {
-      boardTile->boardValue = 1;
-    } else {
-      boardTile->boardValue -= this->GetBoardValue();
+    if (boardTile->ContainsState(TileState::PlayerTile)) {
+      boardTile->RemoveState(TileState::PlayerTile);
     }
   }
 }
@@ -131,7 +129,7 @@ void Player::Interact(Board* b) {
   Tile *bPos = b->GetBoardTile(GetCurrentTilePosition());
 
   // Remove the trap from the tile (Display wise)
-  bPos->boardValue -= Lever::GetLeverValue();
+  bPos->RemoveState(TileState::LeverTile);
   std::vector<Lever*> ls = b->GetLevers();
 
   for (int i = 0; i < ls.size(); i++) {

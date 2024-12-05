@@ -1,7 +1,9 @@
-#include "Tile.h"
+#include "../Gameboard/Tile.h"
 #include <vector>
 #include <string>
 #pragma once
+
+class Board;
 
 class BaseTrap {
 public:
@@ -40,6 +42,10 @@ public:
   /*
    * Methods
    */
+
+  // init the starting values of the trap
+  void InitTrap();
+
   inline static int GetActiveTrapVal() { return BaseTrap::activeTrapVal; }
   inline static int GetWarningTrapVal() { return BaseTrap::warningTrapVal; }
 
@@ -52,5 +58,11 @@ public:
   std::vector<Tile*> GetAffectedTiles();
 
   bool GetIsActivated();
+
+  // randomizes what tiles are trapped (Child specific)
+  virtual void SetRandomAffectedTiles(Board* b);
+
+  // allows player to pick trapped tiles (Child specific)
+  virtual void SetChosenAffectedTiles(Board* b);
   
 };

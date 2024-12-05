@@ -1,5 +1,5 @@
 #include <string>
-#include "Tile.h"
+#include "../Gameboard/Tile.h"
 
 class Board;
 
